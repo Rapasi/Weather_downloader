@@ -81,7 +81,7 @@ def myround(x, base=5):
 
 print(f"Sää paikassa {asema[0]}\n"
       f"Lämpötila {temp_value} \u00b0C\n"
-      f'Tuuli {wind_value} m/s {degrees_to_cardinal(wind_dir) } ({myround(wind_dir)}\u00b0C)\n'
+      f'Tuuli {wind_value} m/s {degrees_to_cardinal(wind_dir) } ({myround(wind_dir)}\u00b0)\n'
       f'Lumen syvyys {snow_value}\n'
       f'Ilmanpaine {pressure_value} hPa'
       )
