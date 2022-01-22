@@ -6,8 +6,11 @@ from weather import weather_downnload
 
 #Get users entry and show downloaded wether in label
 def get_entry():
-    weather=weather_downnload(entry.get())
-    label2['text']=weather
+    try:
+        weather=weather_downnload(entry.get())
+        label2['text']=weather
+    except Exception: 
+        label2['text']='Select valid location'
 
 # Usual Tkinter parameters
 root=tk.Tk()
