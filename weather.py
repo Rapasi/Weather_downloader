@@ -29,10 +29,10 @@ def weather_downnload(paikka):
 
   asema=(sorted(obs.data[latest_tstep].keys()))
 
-  #print(obs.data[latest_tstep][asema[0]].keys())
+  print(obs.data[latest_tstep][asema[0]].keys())
 
   # Selecting observations 
-  keys=['Air temperature','Wind speed','Wind direction','Snow depth','Pressure (msl)']
+  keys=['Air temperature','Wind speed','Wind direction','Snow depth','Pressure (msl)','Cloud amount']
 
   '''Converting values to a list of dictionarys which elements I know how to access. 
   there is likely easier way to do this, but this is what I was able to work out.'''
@@ -41,7 +41,6 @@ def weather_downnload(paikka):
   for key in keys:
     values=obs.data[latest_tstep][asema[0]].get(key)
     arvot.append(values)
-
   # Converting to a dictionary and selecting values. 
 
   temperature=next(item for item in arvot if item["units"] == "degC")
@@ -50,11 +49,14 @@ def weather_downnload(paikka):
   snow=next(item for item in arvot if item["units"] == "cm")
   pressure=next(item for item in arvot if item["units"] == "hPa")
 
+
   temp_value=temperature['value']
   wind_value=wind['value']
   pressure_value=pressure['value']
   snow_value=snow['value']
   wind_dir=wind_direction['value']
+  cloud_amount=arvot[-1]['units']
+  print(cloud_amount)
 
   # This function will convert wind direction to compass direction 
 
@@ -86,3 +88,6 @@ def weather_downnload(paikka):
         f'Lumen syvyys {snow_value}\n'
         f'Ilmanpaine {pressure_value} hPa'
         )
+  
+if __name__=='__main__':
+  pass
