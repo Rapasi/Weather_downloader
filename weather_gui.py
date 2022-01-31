@@ -9,60 +9,96 @@ from weather import *
 #Get users entry and show downloaded wether in label
 def get_entry():
     try:
-        weather=weather_downnload(entry.get())
-        label2['text']=(f"{weather[0]}\n\n"
+        weather=weather_downnload(entry_weather.get())
+        label_data['text']=(f"{weather[0]}\n\n"
         f"Lämpötila {weather[1]}\u00b0C\n"
         f'Tuuli {weather[2]} m/s {degrees_to_cardinal(weather[3]) } ({myround(weather[3])}\u00b0)\n'
         f'Ilmanpaine {weather[4]} hPa\n'
         f'Lumen syvyys {weather[5]} \n')
     except Exception as e: 
         print(e)
-        label2['text']='Syötä kelvollinen sijainti'
+        label_data['text']='Syötä kelvollinen sijainti'
+
+
+# Converting user input in "sea" entry box to sea level output in frame. 
 
 def get_sea():
     try:
-        sea_level=sea_download(entry2.get())
-        mittausasema=sea_download(entry2.get().capitalize())[1]
-        for i in mittausasema:
-            if i==entry2.get().capitalize():
+        # Finding observation stations that correspond to user input. 
+        sea_level=sea_download(entry_sea.get())
+        observations=sea_download(entry_sea.get().capitalize())[1]
+        for i in observations:
+            if i==entry_sea.get().capitalize():
                 observation=i
 
-        label2['text']=(f'Mittausasema {observation}\n'
+        label_data['text']=(f'Mittausasema {observation}\n'
         f'Vedenkorkeus on {sea_level[0]} cm')
     except Exception as e:
         print(e)
-        label2['text']='Vedenkorkeus ei saatavilla valitulle paikalle'
+        label_data['text']='Vedenkorkeus ei saatavilla valitulle paikalle'
 
 
 
-# Usual Tkinter parameters
+# Converting user input in metar entry box to metar output in frame. 
+
+def get_metar():
+    try:
+        metar_data=metar_download(entry_metar.get())
+        #label_data['font']=("Arial", 12)
+        label_data['text']=metar_data.replace(' ','\n')
+    
+    # If no data is found for input data      
+    
+    except Exception as e:
+        label_data['text']=('Ei saatavilla, tarkista syöte!\n'
+        'Tarkista API avain weather.py koodissa.')
+
+# Window size 
+
 root=tk.Tk()
-root.geometry('500x500')
+root.geometry('1000x1000')
 
-label=tk.Label(root,text='Valitse paikka (sää)',fg='black',height=2)
-label.place(relx=.1)
+# Labels that tell whitch entry box to input a location. 
 
-label2=tk.Label(root,text='Valitse paikka (vedenkorkeus)',fg='black',height=2)
-label2.place(relx=.1,rely=.2)
+label_weather=tk.Label(root,text='Valitse paikka (sää)',fg='black',height=2)
+label_weather.place(relx=.05, rely=.05)
 
-entry=tk.Entry(root)
-entry.place(anchor='center',relx=.2,rely=.1)
+label_sea=tk.Label(root,text='Valitse paikka (vedenkorkeus)',fg='black',height=2)
+label_sea.place(relx=.05,rely=.13)
 
-entry2=tk.Entry(root)
-entry2.place(anchor='center',relx=.2,rely=.3)
+label_metar=tk.Label(root,text='Valitse lentopaikka (ICAO)',fg='black',height=2)
+label_metar.place(relx=.05,rely=.21)
+
+
+# Entry boxes where user can input a derired location to download the data.  
+
+entry_weather=tk.Entry(root)
+entry_weather.place(anchor='center',relx=.2,rely=.1)
+
+entry_sea=tk.Entry(root)
+entry_sea.place(anchor='center',relx=.2,rely=.18)
+
+entry_metar=tk.Entry(root)
+entry_metar.place(anchor='center',relx=.2,rely=.26)
+
+
+# Adding buttons that download requested data for entries. 
 
 button=tk.Button(root,text='Lataa säätiedot',command=lambda:get_entry())
-button.place(anchor='center',relx=.5,rely=.1)
+button.place(anchor='center',relx=.33,rely=.1)
 
-button2=tk.Button(root,text='Lataa vedenkorkeus',command=lambda:get_sea())
-button2.place(anchor='center',relx=.5,rely=.3)
+button_sea=tk.Button(root,text='Lataa vedenkorkeus',command=lambda:get_sea())
+button_sea.place(anchor='center',relx=.33,rely=.18)
 
+button_metar=tk.Button(root,text='Lataa sää lentopaikalla',command=lambda:get_metar())
+button_metar.place(anchor='center',relx=.33,rely=.26)
 
+# Placing frame for diplaying the output 
 frame=tk.Frame(root,bd=10)
-frame.place(relx=.4,rely=.5,anchor='n',relwidth=.75,relheight=.6)
+frame.place(relx=.6,rely=.3,anchor='n',relwidth=.75,relheight=.6)
 
-label2=tk.Label(frame,font=("Arial", 16))
-label2.place(relx=.02,rely=.1)
+label_data=tk.Label(frame,font=("Arial", 16))
+label_data.place(relx=.02,rely=.1)
 
 
 root.mainloop()
