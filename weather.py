@@ -1,3 +1,6 @@
+
+# Using api of finnish meteorological institute to download weather data
+
 def weather_downnload(paikka):
   from cmath import nan
   import datetime as dt
@@ -82,6 +85,9 @@ def degrees_to_cardinal(d):
 def myround(x, base=5):
     return base * round(x/base)
 
+
+# Same api as before but this time for sea level. Syntax is almost identical to weather download.
+
 def sea_download(location):
   from cmath import nan
   import datetime as dt
@@ -115,6 +121,31 @@ def sea_download(location):
   sea_data=[list(values[1].values())[0],asema]
   return(sea_data)
   
+
+# Checkwx Api for metar data 
+
+def metar_download(location):
+  
+  import requests
+  import json
+
+  # INSERT YOUR API KEY HERE! YOU CAN GET ONE FROM checkwx.com. 
+
+  hdr = {"X-API-Key": "Your_key"}
+  
+  # Formating web address to take user input. 
+  
+  req = requests.get("https://api.checkwx.com/metar/{}".format(location), headers=hdr)
+
+  # Json to dictionary and then to string. 
+  
+  try:
+      req.raise_for_status()
+      resp = json.loads(req.text)
+      return resp['data'][0]
+
+  except requests.exceptions.HTTPError as e:
+      print(e)
 
 if __name__=='__main__':
   pass
