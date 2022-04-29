@@ -1,12 +1,13 @@
-
+from cmath import nan
+import datetime as dt
+from xml.etree.ElementPath import prepare_self
+import math
+from fmiopendata.wfs import download_stored_query
+import requests
+import json
 # Using api of finnish meteorological institute to download weather data
 
 def weather_downnload(paikka):
-  from cmath import nan
-  import datetime as dt
-  from xml.etree.ElementPath import prepare_self
-  import math
-  from fmiopendata.wfs import download_stored_query
 
   # Retrieve the latest hour of data from a bounding box
   end_time = dt.datetime.utcnow()
@@ -30,9 +31,9 @@ def weather_downnload(paikka):
   #print(dir(obs))
   #print(obs.data[latest_tstep])
 
-  asema=(sorted(obs.data[latest_tstep].keys()))
+  station=(sorted(obs.data[latest_tstep].keys()))
 
-  #print(obs.data[latest_tstep][asema[0]].keys())
+  #print(obs.data[latest_tstep][station[0]].keys())
 
   # Selecting observations 
   keys=['Air temperature','Wind speed','Wind direction','Snow depth','Pressure (msl)','Cloud amount']
@@ -40,33 +41,32 @@ def weather_downnload(paikka):
   '''Converting values to a list of dictionarys which elements I know how to access. 
   there is likely easier way to do this, but this is what I was able to work out.'''
 
-  arvot=[]
+  value_list=[]
   for key in keys:
-    values=obs.data[latest_tstep][asema[0]].get(key)
-    arvot.append(values)
+    values=obs.data[latest_tstep][station[0]].get(key)
+    value_list.append(values)
+
   # Converting to a dictionary and selecting values. 
 
-  temperature=next(item for item in arvot if item["units"] == "degC")
-  wind=next(item for item in arvot if item["units"] == "m/s")
-  wind_direction=next(item for item in arvot if item["units"] == "deg")
-  snow=next(item for item in arvot if item["units"] == "cm")
-  pressure=next(item for item in arvot if item["units"] == "hPa")
+  temperature=value_list[0]['value']
+  wind=value_list[1]['value']
+  wind_direction=value_list[2]['value']
+  snow=value_list[3]['value']
+  pressure=value_list[4]['value']
+  cloud=value_list[5]['units']
+ 
 
 
-  temp_value=temperature['value']
-  wind_value=wind['value']
-  pressure_value=pressure['value']
-  snow_value=snow['value']
-  wind_dir=wind_direction['value']
+  
 
   # Checking if snow value is nan
 
-  if math.isnan(snow_value):
-    snow_value='ei saatavilla'
+  if math.isnan(snow):
+    snow='ei saatavilla'
 
 
   # Listing weather observation from the nearest station. 
-  value_list=[asema[0],temp_value,wind_value,wind_dir,pressure_value,snow_value]
+  value_list=[station[0],temperature,wind,wind_direction,pressure,snow,cloud]
   return(value_list)
 
 
@@ -89,11 +89,6 @@ def myround(x, base=5):
 # Same api as before but this time for sea level. Syntax is almost identical to weather download.
 
 def sea_download(location):
-  from cmath import nan
-  import datetime as dt
-  from xml.etree.ElementPath import prepare_self
-  import math
-  from fmiopendata.wfs import download_stored_query
 
   end_time = dt.datetime.utcnow()
   start_time = end_time - dt.timedelta(minutes=60)  
@@ -112,22 +107,19 @@ def sea_download(location):
                                     "endtime=" + end_time])
 
   latest_tstep = max(obs.data.keys())
-  asema=(sorted(obs.data[latest_tstep].keys()))
+  station=(sorted(obs.data[latest_tstep].keys()))
   
 
   values=obs.data[latest_tstep][str(location).capitalize()]
   for k, v in values.items():
     values=(k, v)
-  sea_data=[list(values[1].values())[0],asema]
+  sea_data=[list(values[1].values())[0],station]
   return(sea_data)
   
 
 # Checkwx Api for metar data 
 
 def metar_download(location):
-  
-  import requests
-  import json
 
   # INSERT YOUR API KEY HERE! YOU CAN GET ONE FROM checkwx.com. 
 

@@ -14,10 +14,10 @@ def get_entry():
         f"Lämpötila {weather[1]}\u00b0C\n"
         f'Tuuli {weather[2]} m/s {degrees_to_cardinal(weather[3]) } ({myround(weather[3])}\u00b0)\n'
         f'Ilmanpaine {weather[4]} hPa\n'
-        f'Lumen syvyys {weather[5]} \n')
+        f'Pilvisyys {weather[6]}')
     except Exception as e: 
         print(e)
-        label_data['text']='Syötä kelvollinen sijainti'
+        label_data['text']='Tarkista sijainti'
 
 
 # Converting user input in "sea" entry box to sea level output in frame. 
@@ -31,7 +31,7 @@ def get_sea():
             if i==entry_sea.get().capitalize():
                 observation=i
 
-        label_data['text']=(f'Mittausasema {observation}\n'
+        label_data['text']=(f'Mittausasema{observation}\n'
         f'Vedenkorkeus on {sea_level[0]} cm')
     except Exception as e:
         print(e)
