@@ -5,6 +5,7 @@ import math
 from fmiopendata.wfs import download_stored_query
 import requests
 import json
+import config
 # Using api of finnish meteorological institute to download weather data
 
 def weather_downnload(paikka):
@@ -123,7 +124,7 @@ def metar_download(location):
 
   # INSERT YOUR API KEY HERE! YOU CAN GET ONE FROM checkwx.com. 
 
-  hdr = {"X-API-Key": "Your_key"}
+  hdr = {"X-API-Key": config.API_KEY}
   
   # Formating web address to take user input. 
   
